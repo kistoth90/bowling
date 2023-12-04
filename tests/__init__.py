@@ -1,3 +1,3 @@
-from main import BowlinCalculator
+from main import BowlingCalculator
 
-bc = BowlinCalculator()
+bc = BowlingCalculator()

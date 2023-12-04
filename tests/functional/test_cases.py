@@ -1,18 +1,27 @@
+import pytest
+
 from main import CalculateScore
 
 
 def test_lack_of_frame():
     TEST_CASE = ""
-    assert CalculateScore(TEST_CASE) == [
-        "Invalid number of frames. There should be between 10 and 12 frames."
-    ]
+    with pytest.raises(Exception) as exc:
+        CalculateScore(TEST_CASE)
+
+    assert (
+        str(exc.value)
+        == "Invalid number of frames. There should be between 10 and 12 frames."
+    )
 
 
 def test_much_of_frame():
     TEST_CASE = "53 72 52 33 21 54 x 52 63 x x x x"
-    assert CalculateScore(TEST_CASE) == [
-        "Invalid number of frames. There should be between 10 and 12 frames."
-    ]
+    with pytest.raises(Exception) as exc:
+        CalculateScore(TEST_CASE)
+    assert (
+        str(exc.value)
+        == "Invalid number of frames. There should be between 10 and 12 frames."
+    )
 
 
 def test_bad_luck():
@@ -31,13 +40,13 @@ def test_example():
 
 
 def test_example_2():
-    TEST_CASE = "53 71 12 - 7/ 9/ 24 6/ 42 61"
-    assert CalculateScore(TEST_CASE) == 83
+    TEST_CASE = "53 71 12 -1 7/ 9/ 24 6/ 42 61"
+    assert CalculateScore(TEST_CASE) == 84
 
 
 def test_example_3():
-    TEST_CASE = "- 5/ - x 52 9/ 24 6/ 2 1"
-    assert CalculateScore(TEST_CASE) == 67
+    TEST_CASE = "- 5/ 5- x 52 9/ - 6/ 2 1"
+    assert CalculateScore(TEST_CASE) == 69
 
 
 def test_example_4():
@@ -45,6 +54,19 @@ def test_example_4():
     assert CalculateScore(TEST_CASE) == 64
 
 
-# def test_invalid_frame():
-#     TEST_CASE = "72 50 24 20 05 56 24 35 62 90"
-#     assert CalculateScore(TEST_CASE) == 64
+def test_invalid_frame():
+    TEST_CASE = "72 x /4 20 05 24 24 35 62 90"
+
+    with pytest.raises(Exception) as exc:
+        assert CalculateScore(TEST_CASE) == 64
+
+    assert str(exc.value) == "/ cannot follow x"
+
+
+def test_to_high_frame_sum():
+    TEST_CASE = "72 50 24 20 05 56 24 35 62 90"
+
+    with pytest.raises(Exception) as exc:
+        CalculateScore(TEST_CASE)
+
+    assert str(exc.value) == "One frame cannot be higher than 10."

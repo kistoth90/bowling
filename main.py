@@ -1,59 +1,54 @@
-def CalculateScore2(input):
-    total_arr = []
-    arr_input = input.split(" ")
+def CalculateScore(input_frames):
+    total_score = []
+    frames = input_frames.split(" ")
 
-    arr = validate_input(arr_input)
-    if arr:
-        return arr
-    
-    for i, frame in enumerate(arr_input):
-        arr_input[i] = list(frame)
+    validation_errors = validate_input(frames)
+    if validation_errors:
+        return validation_errors
 
-    for i, frame in enumerate(arr_input[:10]):
+    for i, frame in enumerate(frames):
+        frames[i] = list(frame)
+
+    for i, frame in enumerate(frames[:10]):
         for score in frame:
             if score.isdigit():
-                total_arr.append(int(score))
-            elif score == 'x':
-                total_arr.append(10)
-                got = 0
-                while 2 > got:
-                    for x, x_frame in enumerate(arr_input[i+1:]):
-                        for y in x_frame:
-                            if y == 'x':
-                                total_arr.append(10)
-                                got += 1
-                            elif y == '/':
-                                total_arr.append(10-total_arr[-1])
-                                got += 1
-                            elif y.isdigit():
-                                total_arr.append(int(y))
-                                got += 1
-                            if got == 2:
-                                break
-                        if got == 2:
-                            break
-            elif score == '/':
-                total_arr.append(10-total_arr[-1])
-                got = 0
-                while 1 > got:
-                    for x, x_frame in enumerate(arr_input[i+1:]):
-                        for y in x_frame:
-                            if y == 'x':
-                                total_arr.append(10)
-                                got += 1
-                            elif y.isdigit():
-                                total_arr.append(int(y))
-                                got += 1
-                            if got == 1:
-                                break
-                        if got == 1:
-                            break
+                total_score.append(int(score))
+            elif score == "x":
+                total_score.append(10)
+                total_score.extend(calculate_bonus(frames, i, 2))
+            elif score == "/":
+                total_score.append(10 - total_score[-1])
+                total_score.extend(calculate_bonus(frames, i, 1))
 
-    return sum(total_arr)
+    return sum(total_score)
 
-def validate_input(input):
-    err = []
-    if len(input) < 10 or len(input) > 12:
-        err.append("The length of the input not valid. The frames must be between 10 and 12.")
 
-    return err
+def calculate_bonus(frames, current_frame_index, bonus_rolls):
+    bonus_scores = []
+    rolls_counted = 0
+
+    for next_frame in frames[current_frame_index + 1 :]:
+        for roll in next_frame:
+            if rolls_counted == bonus_rolls:
+                return bonus_scores
+
+            if roll == "x":
+                bonus_scores.append(10)
+            elif roll.isdigit():
+                bonus_scores.append(int(roll))
+            elif roll == "/":
+                bonus_scores.append(10 - bonus_scores[-1])
+
+            rolls_counted += 1
+
+    return bonus_scores
+
+
+def validate_input(input_frames):
+    errors = []
+    if not (10 <= len(input_frames) <= 12):
+        errors.append(
+            "Invalid number of frames. There should be between 10 and 12 frames."
+        )
+
+    return errors

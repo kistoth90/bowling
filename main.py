@@ -1,4 +1,4 @@
-class BowlinCalculator:
+class BowlingCalculator:
     def __init__(self):
         self.total_score = None
         self.frames = None

@@ -4,7 +4,7 @@ class BowlingCalculator:
         self.frames = None
         self.current_frame_index = None
 
-    def calculate_score(self, input_frames):
+    def calculate_score(self, input_frames: str) -> list:
         self.total_score = []
         self.frames = input_frames.split(" ")
 
@@ -25,23 +25,23 @@ class BowlingCalculator:
 
         return sum(self.total_score)
 
-    def calculate_bonus(self, bonus_type):
+    def calculate_bonus(self, bonus_type: str) -> list:
         bonus_scores = []
         rolls_counted = 0
 
         for next_frame in self.frames[self.current_frame_index + 1 :]:
-            for roll in next_frame:
+            for score in next_frame:
                 self.validate_bonus(bonus_type)
 
                 bonus_rolls = 1 if bonus_type == "/" else 2
                 if rolls_counted == bonus_rolls:
                     return bonus_scores
 
-                if roll == "x":
+                if score == "x":
                     bonus_scores.append(10)
-                elif roll.isdigit():
-                    bonus_scores.append(int(roll))
-                elif roll == "/":
+                elif score.isdigit():
+                    bonus_scores.append(int(score))
+                elif score == "/":
                     bonus_scores.append(10 - bonus_scores[-1])
 
                 rolls_counted += 1
@@ -61,6 +61,6 @@ class BowlingCalculator:
             except ValueError:
                 pass
 
-    def validate_bonus(self, bonus_type):
+    def validate_bonus(self, bonus_type: str):
         if bonus_type == "x" and self.frames[self.current_frame_index + 1][0] == "/":
             raise Exception("/ cannot follow x")
